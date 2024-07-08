@@ -47,9 +47,11 @@ custom:
 
   scriptable:
     hooks:
-      before:package:createDeploymentArtifacts: 
+      before:package:createDeploymentArtifacts: # Runs below scripts to install layer dependencies before package
         - npm run install:common
         - npm run install:fastapi
+      after:deploy:   # Runs below scripts to cleanup layers dependencies installed after deployment
+        - npm run cleanup:layers
       
 plugins:
   - serverless-python-requirements
@@ -59,7 +61,7 @@ plugins:
 package:
   individually: true
   patterns:
-    - 'layers/**'
+    - '!layers/**'
     - '!node_modules/**'
     - '!.serverless/**'
     - '!package-lock.json'
