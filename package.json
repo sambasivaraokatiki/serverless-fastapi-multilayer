@@ -1,0 +1,12 @@
+{
+  "name": "serverless-fastapi-with-multi-layers",
+  "version": "1.0.0",
+  "scripts": {
+    "install:common": "mkdir -p layers/common/python && pip install -r requirements_common.txt --platform manylinux2014_x86_64 --only-binary=:all: -t layers/common/python/ && echo 'common dependencies installed'",
+    "install:fastapi": "mkdir -p layers/fastapi/python && pip install -r requirements_fastapi.txt  --platform manylinux2014_x86_64 --only-binary=:all: -t layers/fastapi/python/ && echo 'fastapi dependencies installed'"
+  },
+  "devDependencies": {
+    "serverless-scriptable-plugin": "^1.3.1",
+    "serverless-python-requirements": "^6.1.0"
+  }
+}

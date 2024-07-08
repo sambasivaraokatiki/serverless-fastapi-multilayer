@@ -1,0 +1,67 @@
+service: serverless-fastapi-with-multi-layers
+
+configValidationMode: error
+
+provider:
+  name: aws
+  runtime: python3.11
+  stage: dev
+
+layers:
+  common:
+    path: layers/common
+    compatibleRuntimes:
+      - python3.11
+
+  fastapi:
+    path: layers/fastapi
+    compatibleRuntimes:
+      - python3.11
+
+functions:
+  - ${file(serverless_functions/normal_functions.yml):functions}
+  - ${file(serverless_functions/fastapi_functions.yml):functions}
+
+resources:
+  Resources:
+    MyQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: fastapi-sample-queue
+
+custom:
+  pythonRuntime: python3.11
+  pythonRequirements:
+    layer: true
+    slim: true
+    dockerizePip: false
+    useDownloadCache: false
+    useStaticCache: false
+    pipCmdExtraArgs:
+      - '--platform manylinux2014_x86_64'
+      - '--only-binary=:all:'
+    slimPatterns:
+      - "**/*.dist-info*"
+      - "**/__pycache__*"
+      - "**/*.pyc"
+
+  scriptable:
+    hooks:
+      before:package:createDeploymentArtifacts: 
+        - npm run install:common
+        - npm run install:fastapi
+      
+plugins:
+  - serverless-python-requirements
+  - serverless-scriptable-plugin
+
+
+package:
+  individually: true
+  patterns:
+    - 'layers/**'
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!package-lock.json'
+    - '!package.json'
+    - '!.venv/**'

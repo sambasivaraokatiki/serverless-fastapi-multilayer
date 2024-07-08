@@ -1,0 +1,10 @@
+functions:
+  sample:
+    handler: handler/sample.handler
+    layers:
+      - { Ref: CommonLambdaLayer }
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http:
+          path: /sample
+          method: GET

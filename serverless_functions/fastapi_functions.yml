@@ -1,0 +1,14 @@
+functions:
+  sample-fastapi:
+    handler: handler/sample_fastapi.handler
+    layers:
+      - { Ref: CommonLambdaLayer }
+      - { Ref: FastapiLambdaLayer }
+      - { Ref: PythonRequirementsLambdaLayer }
+    events:
+      - http:
+          path: /
+          method: any
+      - http:
+          path: /{proxy+}
+          method: any
